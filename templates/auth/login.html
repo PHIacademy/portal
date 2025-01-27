@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Educational Portal{% endblock %}
+
+{% block content %}
+    <!-- Login Form Container -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-center mb-4">Welcome Back</h4>
+                        <!-- Display Flash Messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="POST" action="{{ url_for('auth.login') }}">
+                            <!-- Email Field -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                            </div>
+                            
+                            <!-- Password Field -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+                            </div>
+                            
+                            <!-- Remember Me -->
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                <label class="form-check-label" for="remember">Remember me</label>
+                            </div>
+                            
+                            <!-- Login Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                                </button>
+                            </div>
+                            
+                            <!-- Additional Links -->
+                            <div class="text-center mt-3">
+                                <a href="#" class="text-decoration-none">Forgot password?</a>
+                            </div>
+                        </form>
+
+                        <!-- Social Login Divider -->
+                        <div class="position-relative my-4">
+                            <hr>
+                            <p class="text-center position-absolute top-50 start-50 translate-middle bg-white px-3">
+                                or continue with
+                            </p>
+                        </div>
+
+                        <!-- Social Login Buttons -->
+                        <div class="d-grid gap-2 mb-3">
+                            <!-- Google Login -->
+                            <button type="button" class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-google"></i>
+                                Continue with Google
+                            </button>
+                            
+                            <!-- Microsoft Login -->
+                            <button type="button" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-microsoft"></i>
+                                Continue with Microsoft
+                            </button>
+                        </div>
+
+                        <!-- Sign Up Link -->
+                        <div class="text-center">
+                            <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.signup') }}" class="text-decoration-none">Sign up</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

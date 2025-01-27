@@ -1,0 +1,56 @@
+from flask import Flask, session
+from flask_sqlalchemy import SQLAlchemy
+import os
+from datetime import datetime
+
+# Initialize SQLAlchemy
+db = SQLAlchemy()
+
+def create_app():
+    app = Flask(__name__, 
+                template_folder='../templates',
+                static_folder='../static')
+    
+    # Configuration
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        "pool_pre_ping": True,
+        "pool_size": 10,
+        "max_overflow": 20,
+        "pool_recycle": 300,
+    }
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, '..', 'uploads')
+    
+    # Ensure upload directory exists
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    
+    # Initialize plugins
+    db.init_app(app)
+    
+    with app.app_context():
+        # Import routes
+        from app.routes import main, subject, article, auth
+        
+        # Register blueprints
+        app.register_blueprint(main.bp)
+        app.register_blueprint(subject.bp)
+        app.register_blueprint(article.bp)
+        app.register_blueprint(auth.auth)
+        
+        # Create database tables
+        db.create_all()
+        
+        # Initialize default subjects if none exist
+        from app.models import Subject
+        if not Subject.query.first():
+            default_subjects = [
+                Subject(name='Chinese', description='Chinese language and literature'),
+                Subject(name='English', description='English language and literature'),
+                Subject(name='Math', description='Mathematics and problem solving')
+            ]
+            for subject in default_subjects:
+                db.session.add(subject)
+            db.session.commit()
+            
+    return app

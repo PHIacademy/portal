@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Article - {{ subject.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .file-input-wrapper {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    .custom-file-label::after {
+        content: "Browse";
+    }
+    .upload-instructions {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: .25rem;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="upload-form">
+        <h1 class="text-center mb-4">Upload Article</h1>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ subject.name }}</h5>
+                <p class="card-text">{{ subject.description }}</p>
+            </div>
+        </div>
+
+        <div class="upload-instructions">
+            <h5>Upload Instructions:</h5>
+            <ul>
+                <li>Only .doc and .docx files are supported</li>
+                <li>Maximum file size: 10MB</li>
+                <li>File will be automatically converted to HTML format</li>
+            </ul>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+            <div class="mb-3">
+                <label for="title" class="form-label">Article Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+                <div class="form-text">Title will be auto-filled from filename but can be edited</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="level" class="form-label">Article Level</label>
+                <select class="form-select" id="level" name="level" required>
+                    <option value="P1-P2">P1-P2</option>
+                    <option value="P3-P4">P3-P4</option>
+                    <option value="P5-P6">P5-P6</option>
+                    <option value="F1-F3">F1-F3</option>
+                    <option value="F4-F6">F4-F6</option>
+                </select>
+                <div class="form-text">Select the difficulty level of the article</div>
+            </div>
+
+            {% if subject.is_chinese_subject %}
+            <div class="mb-3">
+                <label for="genre" class="form-label">Article Genre</label>
+                <select class="form-select" id="genre" name="genre" required>
+                    <option value="">Select a genre</option>
+                    <option value="記敘文">記敘文</option>
+                    <option value="描寫文">描寫文</option>
+                    <option value="說明文">說明文</option>
+                    <option value="議論文">議論文</option>
+                    <option value="抒情文">抒情文</option>
+                    <option value="書信">書信</option>
+                    <option value="日記">日記</option>
+                    <option value="看圖作文">看圖作文</option>
+                    <option value="讀後感">讀後感</option>
+                    <option value="詩詞">詩詞</option>
+                    <option value="應用文">應用文</option>
+                </select>
+                <div class="form-text">Select the genre of the Chinese article</div>
+            </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label for="article" class="form-label">Choose Article File</label>
+                <input type="file" class="form-control" id="article" name="article"
+                       accept=".doc,.docx" required>
+                <div class="form-text">Select a Word document (.doc or .docx)</div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary" id="uploadButton">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    Upload Article
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('uploadForm');
+    const uploadButton = document.getElementById('uploadButton');
+    const spinner = uploadButton.querySelector('.spinner-border');
+
+    form.addEventListener('submit', function(e) {
+        // Show loading state
+        uploadButton.disabled = true;
+        spinner.classList.remove('d-none');
+        uploadButton.textContent = ' Uploading...';
+        spinner.parentNode.insertBefore(spinner, uploadButton.firstChild);
+    });
+
+    // File size validation
+    document.getElementById('article').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 10 * 1024 * 1024) { // 10MB
+                alert('File size exceeds 10MB limit');
+                this.value = '';
+                return;
+            }
+            
+            const fileName = file.name.toLowerCase();
+            if (!fileName.endsWith('.doc') && !fileName.endsWith('.docx')) {
+                alert('Please select a valid Word document (.doc or .docx)');
+                this.value = '';
+                return;
+            }
+
+            // Auto-populate title field with filename (without extension)
+            const titleField = document.getElementById('title');
+            const baseFileName = file.name.replace(/\.(doc|docx)$/i, '');
+            titleField.value = baseFileName;
+        }
+    });
+});
+</script>
+{% endblock %}

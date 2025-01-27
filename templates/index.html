@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Educational Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .subject-card {
+        transition: transform 0.2s;
+    }
+    .subject-card:hover {
+        transform: translateY(-5px);
+    }
+    .card-body {
+        display: flex;
+        flex-direction: column;
+    }
+    .mt-auto {
+        margin-top: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if user %}
+    <h2 class="mb-4">Hello, {{ user.first_name }} {{ user.last_name }}!</h2>
+    {% endif %}
+    <h1 class="text-center mb-4">Welcome to Educational Portal</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for subject in subjects %}
+        <div class="col">
+            <div class="card h-100 subject-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ subject.name }}</h5>
+                    <p class="card-text">{{ subject.description }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            {{ subject.articles|length }} article{% if subject.articles|length != 1 %}s{% endif %}
+                        </small>
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{{ url_for('subject.view', id=subject.id) }}" class="btn btn-primary">View Articles</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add any JavaScript functionality for the subject cards here
+});
+</script>
+{% endblock %}
