@@ -138,6 +138,7 @@ def login():
             session['user_id'] = user.id
             session['user_email'] = user.email
             session['user_name'] = user.full_name
+            session['user_role'] = user.role
             
             # Update last login timestamp
             user.update_last_login()
@@ -156,6 +157,7 @@ def logout():
     session.pop('user_id', None)
     session.pop('user_email', None)
     session.pop('user_name', None)
+    session.pop('user_role', None)
     flash('You have been logged out successfully.', 'info')
     return redirect(url_for('main.index'))
 @auth.route('/profile', methods=['GET', 'POST'])

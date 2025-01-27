@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, abort
+from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, abort, session
 from werkzeug.utils import secure_filename
 from app.models import Subject, Article, db
 import os
@@ -11,11 +11,19 @@ bp = Blueprint('subject', __name__, url_prefix='/subject')
 def view(id):
     """View a specific subject and its articles"""
     subject = Subject.query.get_or_404(id)
-    return render_template('subject/view.html', subject=subject)
+    articles = Article.query.filter_by(subject_id=id)\
+        .order_by(Article.uploaded_at.desc(), Article.title)\
+        .all()
+    return render_template('subject/view.html', subject=subject, articles=articles)
 
 @bp.route('/<int:id>/upload', methods=['GET', 'POST'])
 def upload_article(id):
     """Handle article upload for a subject"""
+    # Check if user has required role
+    if session.get('user_role') not in ['admin', 'teacher']:
+        flash('You do not have permission to upload articles.', 'error')
+        return redirect(url_for('subject.view', id=id))
+        
     subject = Subject.query.get_or_404(id)
     
     if request.method == 'POST':
@@ -76,6 +84,11 @@ def upload_article(id):
 @bp.route('/article/<int:id>/delete', methods=['POST'])
 def delete_article(id):
     """Delete an article and its associated files"""
+    # Check if user has required role
+    if session.get('user_role') not in ['admin', 'teacher']:
+        flash('You do not have permission to delete articles.', 'error')
+        return redirect(url_for('subject.view', id=id))
+        
     article = Article.query.get_or_404(id)
     subject_id = article.subject_id
     

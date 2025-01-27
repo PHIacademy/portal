@@ -26,36 +26,44 @@
                     <strong>Subject:</strong> {{ article.subject.name }}
                 </div>
                 <div>
-                    <form method="POST" action="{{ url_for('article.update_level', id=article.id) }}" class="d-inline">
-                        <i class="bi bi-bar-chart"></i>
-                        <strong>Level:</strong>
-                        <select class="form-select form-select-sm d-inline-block w-auto ms-2" name="level" onchange="this.form.submit()">
-                            <option value="P1-P2" {% if article.level == 'P1-P2' %}selected{% endif %}>P1-P2</option>
-                            <option value="P3-P4" {% if article.level == 'P3-P4' %}selected{% endif %}>P3-P4</option>
-                            <option value="P5-P6" {% if article.level == 'P5-P6' %}selected{% endif %}>P5-P6</option>
-                            <option value="F1-F3" {% if article.level == 'F1-F3' %}selected{% endif %}>F1-F3</option>
-                            <option value="F4-F6" {% if article.level == 'F4-F6' %}selected{% endif %}>F4-F6</option>
-                        </select>
-                    </form>
+                    <i class="bi bi-bar-chart"></i>
+                    <strong>Level:</strong>
+                    {% if session.get('user_role') == 'admin' %}
+                        <form method="POST" action="{{ url_for('article.update_level', id=article.id) }}" class="d-inline">
+                            <select class="form-select form-select-sm d-inline-block w-auto ms-2" name="level" onchange="this.form.submit()">
+                                <option value="P1-P2" {% if article.level == 'P1-P2' %}selected{% endif %}>P1-P2</option>
+                                <option value="P3-P4" {% if article.level == 'P3-P4' %}selected{% endif %}>P3-P4</option>
+                                <option value="P5-P6" {% if article.level == 'P5-P6' %}selected{% endif %}>P5-P6</option>
+                                <option value="F1-F3" {% if article.level == 'F1-F3' %}selected{% endif %}>F1-F3</option>
+                                <option value="F4-F6" {% if article.level == 'F4-F6' %}selected{% endif %}>F4-F6</option>
+                            </select>
+                        </form>
+                    {% else %}
+                        <span class="ms-2">{{ article.level }}</span>
+                    {% endif %}
                 </div>
                 {% if article.subject.is_chinese_subject %}
                 <div>
-                    <form method="POST" action="{{ url_for('article.update_genre', id=article.id) }}" class="d-inline">
-                        <i class="bi bi-pen"></i>
-                        <strong>Genre:</strong>
-                        <select class="form-select form-select-sm d-inline-block w-auto ms-2" name="genre" onchange="this.form.submit()">
-                            <option value="記敘文" {% if article.genre == '記敘文' %}selected{% endif %}>記敘文</option>
-                            <option value="描寫文" {% if article.genre == '描寫文' %}selected{% endif %}>描寫文</option>
-                            <option value="說明文" {% if article.genre == '說明文' %}selected{% endif %}>說明文</option>
-                            <option value="議論文" {% if article.genre == '議論文' %}selected{% endif %}>議論文</option>
-                            <option value="抒情文" {% if article.genre == '抒情文' %}selected{% endif %}>抒情文</option>
-                            <option value="書信" {% if article.genre == '書信' %}selected{% endif %}>書信</option>
-                            <option value="日記" {% if article.genre == '日記' %}selected{% endif %}>日記</option>
-                            <option value="讀後感" {% if article.genre == '讀後感' %}selected{% endif %}>讀後感</option>
-                            <option value="詩詞" {% if article.genre == '詩詞' %}selected{% endif %}>詩詞</option>
-                            <option value="應用文" {% if article.genre == '應用文' %}selected{% endif %}>應用文</option>
-                        </select>
-                    </form>
+                    <i class="bi bi-pen"></i>
+                    <strong>Genre:</strong>
+                    {% if session.get('user_role') == 'admin' %}
+                        <form method="POST" action="{{ url_for('article.update_genre', id=article.id) }}" class="d-inline">
+                            <select class="form-select form-select-sm d-inline-block w-auto ms-2" name="genre" onchange="this.form.submit()">
+                                <option value="記敘文" {% if article.genre == '記敘文' %}selected{% endif %}>記敘文</option>
+                                <option value="描寫文" {% if article.genre == '描寫文' %}selected{% endif %}>描寫文</option>
+                                <option value="說明文" {% if article.genre == '說明文' %}selected{% endif %}>說明文</option>
+                                <option value="議論文" {% if article.genre == '議論文' %}selected{% endif %}>議論文</option>
+                                <option value="抒情文" {% if article.genre == '抒情文' %}selected{% endif %}>抒情文</option>
+                                <option value="書信" {% if article.genre == '書信' %}selected{% endif %}>書信</option>
+                                <option value="日記" {% if article.genre == '日記' %}selected{% endif %}>日記</option>
+                                <option value="讀後感" {% if article.genre == '讀後感' %}selected{% endif %}>讀後感</option>
+                                <option value="詩詞" {% if article.genre == '詩詞' %}selected{% endif %}>詩詞</option>
+                                <option value="應用文" {% if article.genre == '應用文' %}selected{% endif %}>應用文</option>
+                            </select>
+                        </form>
+                    {% else %}
+                        <span class="ms-2">{{ article.genre }}</span>
+                    {% endif %}
                 </div>
                 {% endif %}
                 <div>
