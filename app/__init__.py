@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 import os

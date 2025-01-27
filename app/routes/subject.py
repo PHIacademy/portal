@@ -4,6 +4,7 @@ from app.models import Subject, Article, db
 import os
 from datetime import datetime
 from app.utils.converter import convert_doc_to_html
+from app.utils.blob import upload_to_blob, delete_from_blob
 
 bp = Blueprint('subject', __name__, url_prefix='/subject')
 
@@ -46,10 +47,9 @@ def upload_article(id):
             filename = secure_filename(file.filename)
             html_content = convert_doc_to_html(file)
             html_filename = f"{timestamp}_{os.path.splitext(filename)[0]}.html"
-            html_path = os.path.join(current_app.config['UPLOAD_FOLDER'], html_filename)
             
-            with open(html_path, 'w', encoding='utf-8') as f:
-                f.write(html_content)
+            # Upload HTML content to Vercel Blob
+            blob_url = upload_to_blob(html_content, html_filename)
             
             # Create article record
             article_data = {
@@ -57,7 +57,7 @@ def upload_article(id):
                 'title': request.form['title'],
                 'level': request.form['level'],
                 'html_content': html_content,
-                'html_path': html_filename
+                'blob_url': blob_url
             }
 
             # Add genre if it's a Chinese subject
@@ -92,13 +92,11 @@ def delete_article(id):
     article = Article.query.get_or_404(id)
     subject_id = article.subject_id
     
-    # Delete HTML file
-    html_path = os.path.join(current_app.config['UPLOAD_FOLDER'], article.html_path)
-    
     try:
-        if os.path.exists(html_path):
-            os.remove(html_path)
-            
+        # Delete from Vercel Blob if blob_url exists
+        if article.blob_url:
+            delete_from_blob(article.blob_url)
+        
         # Delete from database
         db.session.delete(article)
         db.session.commit()
