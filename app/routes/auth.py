@@ -33,6 +33,22 @@ def validate_name(name, field="Name"):
         return False, f"{field} must contain only letters and spaces"
     return True, ""
 
+def validate_class_name(class_name):
+    """Validate class name format (e.g., 1A, 2B)"""
+    if not re.match(r"^[1-6][A-F]$", class_name):
+        return False, "Class must be in format like 1A, 2B (1-6 followed by A-F)"
+    return True, ""
+
+def validate_class_number(class_number):
+    """Validate class number"""
+    try:
+        number = int(class_number)
+        if number < 1 or number > 45:
+            return False, "Class number must be between 1 and 45"
+        return True, ""
+    except ValueError:
+        return False, "Class number must be a valid number"
+
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     """Handle user registration"""
@@ -44,10 +60,12 @@ def signup():
         confirm_password = request.form.get('confirm_password')
         first_name = request.form.get('first_name', '').strip()
         last_name = request.form.get('last_name', '').strip()
+        class_name = request.form.get('class_name', '').strip().upper()
+        class_number = request.form.get('class_number', '').strip()
         terms = request.form.get('terms')
 
         # Validate required fields
-        if not all([email, username, password, confirm_password, first_name, last_name, terms]):
+        if not all([email, username, password, confirm_password, first_name, last_name, class_name, class_number, terms]):
             flash('All fields are required.', 'danger')
             return render_template('auth/signup.html')
 
@@ -85,6 +103,18 @@ def signup():
             flash('Passwords do not match.', 'danger')
             return render_template('auth/signup.html')
 
+        # Validate class name
+        valid, message = validate_class_name(class_name)
+        if not valid:
+            flash(message, 'danger')
+            return render_template('auth/signup.html')
+
+        # Validate class number
+        valid, message = validate_class_number(class_number)
+        if not valid:
+            flash(message, 'danger')
+            return render_template('auth/signup.html')
+
         try:
             # Create new user
             user = User()
@@ -94,6 +124,8 @@ def signup():
             user.first_name = first_name
             user.last_name = last_name
             user.is_active = True
+            user.class_name = class_name
+            user.class_number = int(class_number)
             
             db.session.add(user)
             db.session.commit()
@@ -174,15 +206,32 @@ def profile():
     if request.method == 'POST':
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
+        class_name = request.form.get('class_name', '').strip().upper()
+        class_number = request.form.get('class_number', '').strip()
+
+        # Validate class information if provided
+        if class_name:
+            valid, message = validate_class_name(class_name)
+            if not valid:
+                flash(message, 'danger')
+                return render_template('auth/profile.html', user=user)
+
+        if class_number:
+            valid, message = validate_class_number(class_number)
+            if not valid:
+                flash(message, 'danger')
+                return render_template('auth/profile.html', user=user)
         
         user.first_name = first_name
         user.last_name = last_name
+        user.class_name = class_name if class_name else user.class_name
+        user.class_number = int(class_number) if class_number else user.class_number
         db.session.commit()
         
         # Update session name
         session['user_name'] = user.full_name
         
-        flash('Your name has been updated successfully.', 'success')
+        flash('Your profile has been updated successfully.', 'success')
         return redirect(url_for('auth.profile'))
         
     return render_template('auth/profile.html', user=user)

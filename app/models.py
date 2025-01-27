@@ -48,6 +48,8 @@ class User(db.Model):
     last_name = db.Column(db.String(50))
     profile_picture = db.Column(db.String(255))
     bio = db.Column(db.Text)
+    class_name = db.Column(db.String(20))  # e.g., '1A', '2B', '3C'
+    class_number = db.Column(db.Integer)  # e.g., 1, 2, 3, etc.
 
     def __repr__(self):
         return f'<User {self.username}>'

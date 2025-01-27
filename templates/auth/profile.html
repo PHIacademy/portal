@@ -34,8 +34,24 @@
                                         <label for="last_name">Last Name</label>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="class_name" name="class_name" 
+                                               value="{{ user.class_name or '' }}" placeholder="Class" 
+                                               pattern="^[1-6][A-F]$" title="Class must be in format like 1A, 2B (1-6 followed by A-F)">
+                                        <label for="class_name">Class (e.g., 1A)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="class_number" name="class_number" 
+                                               value="{{ user.class_number or '' }}" placeholder="Class Number"
+                                               min="1" max="45">
+                                        <label for="class_number">Class Number (1-45)</label>
+                                    </div>
+                                </div>
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">Update Name</button>
+                                    <button type="submit" class="btn btn-primary">Update Profile</button>
                                 </div>
                             </div>
                         </form>
@@ -49,6 +65,10 @@
                         <div class="col-md-6">
                             <h5><i class="bi bi-person"></i> Username</h5>
                             <p>{{ user.username }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="bi bi-people"></i> Class</h5>
+                            <p>{{ user.class_name or 'Not set' }} - {{ user.class_number or 'Not set' }}</p>
                         </div>
                         <div class="col-12">
                             <h5><i class="bi bi-file-person"></i> Bio</h5>

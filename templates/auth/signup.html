@@ -44,6 +44,26 @@
                                 </div>
                             </div>
 
+                            <!-- Class Information Row -->
+                            <div class="row g-2 mt-1">
+                                <div class="col-md-6">
+                                    <label for="class_name" class="form-label">Class</label>
+                                    <input type="text" class="form-control" id="class_name" name="class_name" 
+                                           required pattern="^[1-6][A-F]$" placeholder="e.g., 1A">
+                                    <div class="invalid-feedback">
+                                        Please enter a valid class (e.g., 1A, 2B)
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="class_number" class="form-label">Class Number</label>
+                                    <input type="number" class="form-control" id="class_number" name="class_number" 
+                                           required min="1" max="45" placeholder="e.g., 23">
+                                    <div class="invalid-feedback">
+                                        Please enter a valid class number (1-45)
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row g-2">
                                 <!-- Username & Email Row -->
                                 <div class="col-md-6">
