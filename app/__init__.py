@@ -16,7 +16,20 @@ def create_app():
     
     # Configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    
+    # Database Configuration
+    database_url = os.environ.get('DATABASE_URL')
+    if not database_url:
+        raise RuntimeError(
+            'DATABASE_URL environment variable is not set. '
+            'Please configure it in your Vercel project settings.'
+        )
+    
+    # Handle special case where Vercel might modify the DATABASE_URL
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         "pool_pre_ping": True,
         "pool_size": 10,
