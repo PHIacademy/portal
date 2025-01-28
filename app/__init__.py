@@ -23,10 +23,6 @@ def create_app():
         "max_overflow": 20,
         "pool_recycle": 300,
     }
-    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, '..', 'uploads')
-    
-    # Ensure upload directory exists
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
     # Initialize plugins
     db.init_app(app)

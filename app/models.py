@@ -25,7 +25,6 @@ class Article(db.Model):
     level = db.Column(db.String(20), nullable=False, default='F1-F3')  # Levels: P1-P2, P3-P4, P5-P6, F1-F3, F4-F6
     genre = db.Column(db.String(20))  # For Chinese articles: 記敘文, 描寫文, 說明文, 議論文, 抒情文, 書信, 日記, 看圖作文, 讀後感, 詩詞, 應用文
     html_content = db.Column(db.Text)
-    html_path = db.Column(db.String(255))  # Kept for backward compatibility
     blob_url = db.Column(db.String(500))   # URL to the content in Vercel Blob storage
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
 

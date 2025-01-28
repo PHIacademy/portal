@@ -21,30 +21,6 @@ def view(id):
     article = Article.query.get_or_404(id)
     return render_template('article/view.html', article=article)
 
-@bp.route('/download/<int:id>')
-def download_original(id):
-    """Download the original document file"""
-    try:
-        logger.debug(f"Accessing download_original route for article ID: {id}")
-        article = Article.query.get_or_404(id)
-        
-        if not article.html_path:
-            logger.error("No HTML path available for article")
-            abort(404, description="No file available for download")
-            
-        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        file_path = os.path.join(base_path, 'uploads', article.html_path)
-        logger.debug(f"Attempting to send file: {file_path}")
-        
-        if not os.path.exists(file_path):
-            logger.error(f"File not found at path: {file_path}")
-            abort(404, description="File not found")
-            
-        return send_file(file_path, as_attachment=True)
-    except Exception as e:
-        logger.error(f"Error in download_original: {e}", exc_info=True)
-        abort(500, description=f"Error downloading file: {str(e)}")
-
 @bp.route('/<int:id>/update-level', methods=['POST'])
 def update_level(id):
     """Update the level of an article"""
